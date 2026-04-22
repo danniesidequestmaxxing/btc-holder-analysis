@@ -1,0 +1,7 @@
+main.py
+requirements.txt
+__pycache__/
+*.pyc
+.venv/
+venv/
+.streamlit/
