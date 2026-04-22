@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bitcoin Holder Breakdown</title>
+  <meta name="description" content="Live distribution of circulating BTC across CEXs, public-company treasuries, and everything else." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>₿</text></svg>" />
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --panel: #151821;
+      --panel-2: #1c2030;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #272c3a;
+      --accent: #f7931a;
+      --whale: #4c78a8;
+      --other: #6b7280;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+    a { color: var(--accent); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+    header { display: flex; justify-content: space-between; align-items: start; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.5px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin: 0; max-width: 640px; line-height: 1.5; }
+    .controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    button#refresh { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; font-weight: 500; }
+    button#refresh:hover { background: var(--border); }
+    button#refresh:disabled { opacity: 0.5; cursor: not-allowed; }
+    #status { color: var(--muted); font-size: 12px; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    @media (max-width: 680px) { .metrics { grid-template-columns: 1fr; } }
+    .metric { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+    .metric .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric .value { font-size: 24px; font-weight: 600; margin-top: 4px; }
+    .metric .delta { color: var(--accent); font-size: 13px; margin-top: 2px; }
+    h2 { font-size: 18px; margin: 28px 0 12px; font-weight: 600; }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    #chart { width: 100%; min-height: 460px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    tr:last-child td { border-bottom: none; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td.src { color: var(--muted); font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+    .pill.cex { background: rgba(247, 147, 26, 0.15); color: var(--accent); }
+    .pill.whale { background: rgba(76, 120, 168, 0.2); color: #8ab2dc; }
+    #errors { margin-top: 12px; }
+    #errors details { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); }
+    #errors summary { cursor: pointer; }
+    #errors ul { margin: 8px 0 0; padding-left: 20px; }
+    details.methodology { margin-top: 22px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    details.methodology summary { cursor: pointer; color: var(--text); font-weight: 500; }
+    details.methodology code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    footer { color: var(--muted); font-size: 12px; margin-top: 28px; text-align: center; }
+    .skeleton { background: linear-gradient(90deg, var(--panel) 0%, var(--panel-2) 50%, var(--panel) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; height: 24px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Bitcoin Holder Breakdown <span style="color: var(--accent)">₿</span></h1>
+        <p class="subtitle">
+          Share of circulating BTC held by major CEXs, public-company treasuries, and
+          everything else. Data: mempool.space + CoinGecko. No API keys, fetched live
+          in your browser.
+        </p>
+      </div>
+      <div class="controls">
+        <button id="refresh">Refresh</button>
+        <span id="status">Loading…</span>
+      </div>
+    </header>
+
+    <div id="metrics" class="metrics">
+      <div class="metric"><div class="label">Circulating supply</div><div class="skeleton"></div></div>
+      <div class="metric"><div class="label">On top CEXs (tracked)</div><div class="skeleton"></div></div>
+      <div class="metric"><div class="label">Public company treasuries</div><div class="skeleton"></div></div>
+    </div>
+
+    <h2>Supply distribution</h2>
+    <div class="panel"><div id="chart"></div></div>
+
+    <h2>Top 10 tracked entities by BTC held</h2>
+    <div class="panel" id="table-wrap">
+      <div class="skeleton" style="height: 200px;"></div>
+    </div>
+
+    <div id="errors"></div>
+
+    <details class="methodology">
+      <summary>Methodology & caveats</summary>
+      <p><strong>CEX holdings</strong> are summed from a curated list of publicly-known cold-wallet addresses via <code>mempool.space</code>. This undercounts — real CEX reserves are spread across hundreds of wallets. Extend <code>CEX_WALLETS</code> in <code>index.html</code> (e.g. using labeled addresses from BitInfoCharts) to improve coverage.</p>
+      <p><strong>Public-company treasuries</strong> come from CoinGecko's <code>/companies/public_treasury/bitcoin</code> endpoint (Strategy, MARA, Metaplanet, etc.). Spot ETFs and private funds are <strong>not</strong> represented.</p>
+      <p><strong>"Other On-chain"</strong> is computed as circulating supply minus everything tracked above, so it absorbs retail holders, lost coins, Satoshi's stash, spot ETFs, miners, private whales, and any CEX wallets we haven't catalogued.</p>
+    </details>
+
+    <footer>
+      Sources: <a href="https://mempool.space/docs/api/rest" target="_blank" rel="noopener">mempool.space REST API</a> ·
+      <a href="https://www.coingecko.com/en/api" target="_blank" rel="noopener">CoinGecko public API</a>.
+    </footer>
+  </div>
+
+  <script>
+    const CEX_WALLETS = {
+      "Binance": [
+        "34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo",
+        "bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h",
+        "1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s",
+      ],
+      "Bitfinex": ["bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw97"],
+      "Robinhood": ["bc1ql49ydapnjafl5t2cp9zqpjwe6pdgmxy98859v2"],
+      "Kraken":    ["bc1qjasf9z3h7w3jspkhtgatgpyvvzgpa2wwd2lr0eh5tx44reyn2k7sfc27a4"],
+      "Bitstamp":  ["bc1qa5wkgaew2dkv56kfvj49j0av5nml45x9ek9hz6"],
+    };
+
+    const CATEGORY_CEX = "Top CEXs";
+    const CATEGORY_WHALE = "Known Institutional/Whale Entities";
+    const CATEGORY_OTHER = "Other On-chain (Retail/Unknown)";
+    const FALLBACK_SUPPLY = 19_800_000;
+
+    const fmt = (n) => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+    const pct = (n) => n.toFixed(2) + "%";
+
+    async function fetchAddress(addr) {
+      const r = await fetch(`https://mempool.space/api/address/${addr}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+      const s = d.chain_stats || {};
+      const sats = (s.funded_txo_sum || 0) - (s.spent_txo_sum || 0);
+      return sats / 1e8;
+    }
+
+    async function fetchCexHoldings(errors) {
+      const rows = [];
+      const entries = Object.entries(CEX_WALLETS);
+      const work = entries.map(async ([exchange, addrs]) => {
+        const results = await Promise.allSettled(addrs.map(fetchAddress));
+        let total = 0, ok = 0;
+        results.forEach((res, i) => {
+          if (res.status === "fulfilled") { total += res.value; ok += 1; }
+          else errors.push(`${exchange} / ${addrs[i].slice(0, 10)}…: ${res.reason.message}`);
+        });
+        if (total > 0) rows.push({ name: exchange, btc: total, category: CATEGORY_CEX, source: `${ok} cold wallet(s)` });
+      });
+      await Promise.all(work);
+      return rows;
+    }
+
+    async function fetchTreasuries() {
+      const r = await fetch("https://api.coingecko.com/api/v3/companies/public_treasury/bitcoin");
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+      return (d.companies || [])
+        .filter((c) => (c.total_holdings || 0) > 0)
+        .map((c) => ({
+          name: c.name || c.symbol || "Unknown",
+          btc: Number(c.total_holdings),
+          category: CATEGORY_WHALE,
+          source: c.symbol || "public filings",
+        }));
+    }
+
+    async function fetchSupply() {
+      const url = "https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=false";
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+      return Number(d.market_data.circulating_supply);
+    }
+
+    function buildBreakdown(holdings, supply) {
+      const sumCat = (cat) => holdings.filter((h) => h.category === cat).reduce((a, b) => a + b.btc, 0);
+      const cex = sumCat(CATEGORY_CEX);
+      const whale = sumCat(CATEGORY_WHALE);
+      const other = Math.max(supply - cex - whale, 0);
+      return [
+        { category: CATEGORY_CEX, btc: cex },
+        { category: CATEGORY_WHALE, btc: whale },
+        { category: CATEGORY_OTHER, btc: other },
+      ];
+    }
+
+    function renderDonut(breakdown) {
+      const colorMap = { [CATEGORY_CEX]: "#f7931a", [CATEGORY_WHALE]: "#4c78a8", [CATEGORY_OTHER]: "#6b7280" };
+      Plotly.newPlot(
+        "chart",
+        [{
+          type: "pie",
+          hole: 0.55,
+          labels: breakdown.map((b) => b.category),
+          values: breakdown.map((b) => b.btc),
+          marker: { colors: breakdown.map((b) => colorMap[b.category]), line: { color: "#0b0d12", width: 2 } },
+          hovertemplate: "<b>%{label}</b><br>%{value:,.0f} BTC<br>%{percent}<extra></extra>",
+          textinfo: "label+percent",
+          textposition: "outside",
+        }],
+        {
+          showlegend: true,
+          legend: { orientation: "h", yanchor: "bottom", y: -0.15, font: { color: "#e5e7eb" } },
+          margin: { t: 20, b: 20, l: 20, r: 20 },
+          height: 460,
+          paper_bgcolor: "transparent",
+          plot_bgcolor: "transparent",
+          font: { color: "#e5e7eb", family: "-apple-system, system-ui, sans-serif" },
+        },
+        { responsive: true, displayModeBar: false }
+      );
+    }
+
+    function renderMetrics(supply, cex, whale) {
+      document.getElementById("metrics").innerHTML = `
+        <div class="metric">
+          <div class="label">Circulating supply</div>
+          <div class="value">${fmt(supply)} BTC</div>
+          <div class="delta">&nbsp;</div>
+        </div>
+        <div class="metric">
+          <div class="label">On top CEXs (tracked)</div>
+          <div class="value">${fmt(cex)} BTC</div>
+          <div class="delta">${pct(cex / supply * 100)} of supply</div>
+        </div>
+        <div class="metric">
+          <div class="label">Public company treasuries</div>
+          <div class="value">${fmt(whale)} BTC</div>
+          <div class="delta">${pct(whale / supply * 100)} of supply</div>
+        </div>
+      `;
+    }
+
+    function renderTable(holdings, supply) {
+      const top = [...holdings].sort((a, b) => b.btc - a.btc).slice(0, 10);
+      if (top.length === 0) {
+        document.getElementById("table-wrap").innerHTML = '<p style="color: var(--muted)">No holdings loaded.</p>';
+        return;
+      }
+      const rows = top.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${r.name}</td>
+          <td><span class="pill ${r.category === CATEGORY_CEX ? "cex" : "whale"}">${r.category === CATEGORY_CEX ? "CEX" : "Institution"}</span></td>
+          <td class="num">${fmt(r.btc)}</td>
+          <td class="num">${pct(r.btc / supply * 100)}</td>
+          <td class="src">${r.source}</td>
+        </tr>
+      `).join("");
+      document.getElementById("table-wrap").innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Rank</th><th>Entity</th><th>Category</th><th class="num">BTC</th><th class="num">% of Supply</th><th>Source</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function renderErrors(errors) {
+      const el = document.getElementById("errors");
+      if (!errors.length) { el.innerHTML = ""; return; }
+      el.innerHTML = `<details><summary>${errors.length} fetch issue(s)</summary><ul>${errors.map((e) => `<li>${e}</li>`).join("")}</ul></details>`;
+    }
+
+    async function load() {
+      const btn = document.getElementById("refresh");
+      const status = document.getElementById("status");
+      btn.disabled = true;
+      status.textContent = "Loading…";
+
+      const errors = [];
+      let supply = FALLBACK_SUPPLY, supplyLive = false;
+      let cexRows = [], whaleRows = [];
+
+      const [supplyRes, cexRes, whaleRes] = await Promise.allSettled([
+        fetchSupply(),
+        fetchCexHoldings(errors),
+        fetchTreasuries(),
+      ]);
+      if (supplyRes.status === "fulfilled") { supply = supplyRes.value; supplyLive = true; }
+      else errors.push(`supply: ${supplyRes.reason.message} — using fallback ${fmt(FALLBACK_SUPPLY)}`);
+      if (cexRes.status === "fulfilled") cexRows = cexRes.value;
+      else errors.push(`cex: ${cexRes.reason.message}`);
+      if (whaleRes.status === "fulfilled") whaleRows = whaleRes.value;
+      else errors.push(`treasury: ${whaleRes.reason.message}`);
+
+      const holdings = [...cexRows, ...whaleRows];
+      const breakdown = buildBreakdown(holdings, supply);
+
+      renderMetrics(supply, breakdown[0].btc, breakdown[1].btc);
+      renderDonut(breakdown);
+      renderTable(holdings, supply);
+      renderErrors(errors);
+
+      const ts = new Date().toISOString().replace("T", " ").slice(0, 19);
+      status.textContent = `Updated ${ts} UTC${supplyLive ? "" : " · supply fallback"}`;
+      btn.disabled = false;
+    }
+
+    document.getElementById("refresh").addEventListener("click", load);
+    load();
+  </script>
+</body>
+</html>
