@@ -169,7 +169,10 @@ def render_donut(breakdown: pd.DataFrame) -> go.Figure:
             hole=0.55,
             marker=dict(colors=[colors[c] for c in breakdown["category"]]),
             hovertemplate="<b>%{label}</b><br>%{value:,.0f} BTC<br>%{percent}<extra></extra>",
-            textinfo="label+percent",
+            textinfo="percent",
+            textposition="inside",
+            insidetextorientation="horizontal",
+            textfont=dict(size=14, color="#ffffff"),
         )
     )
     fig.update_layout(

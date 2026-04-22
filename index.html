@@ -198,8 +198,10 @@
           values: breakdown.map((b) => b.btc),
           marker: { colors: breakdown.map((b) => colorMap[b.category]), line: { color: "#0b0d12", width: 2 } },
           hovertemplate: "<b>%{label}</b><br>%{value:,.0f} BTC<br>%{percent}<extra></extra>",
-          textinfo: "label+percent",
-          textposition: "outside",
+          textinfo: "percent",
+          textposition: "inside",
+          insidetextorientation: "horizontal",
+          textfont: { size: 14, color: "#ffffff" },
         }],
         {
           showlegend: true,
