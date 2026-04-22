@@ -111,118 +111,129 @@
     const SNAPSHOT_DATE = "2026-04-22";
 
     // Snapshot of Bitcoin top holders from Arkham Intelligence, 2026-04-22.
-    // Values for top ~35 entities are exact from Arkham; remaining are estimates.
+    // Values marked ✓ are exact from Arkham screenshots; others are estimates.
     const HOLDERS_SNAPSHOT = [
       // ── Top CEXs ──────────────────────────────────────────────────────────
-      { name: "Coinbase",                btc: 962980,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Binance",                 btc: 630107,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Upbit",                   btc: 185943,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Robinhood",               btc: 185779,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Kraken",                  btc: 156683,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bitfinex",                btc: 149943,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "OKX",                     btc: 109783,  category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Gemini",                  btc: 60339,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "bitFlyer",                btc: 55527,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bybit",                   btc: 53157,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Coincheck",               btc: 42452,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bithumb",                 btc: 42435,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Deribit",                 btc: 41968,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Binance Pool",            btc: 41924,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bitstamp",                btc: 41562,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Crypto.com",              btc: 40307,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Boerse Stuttgart Digital",btc: 11000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bitget",                  btc: 25000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Revolut",                 btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "River",                   btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bitvavo",                 btc: 8000,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bitbank",                 btc: 13000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Gate",                    btc: 27000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "BitMEX",                  btc: 32000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "SBI VC Trade",            btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "HashKey Exchange",        btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Bitkub",                  btc: 16000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "MEXC",                    btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "KuCoin",                  btc: 22000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "HTX",                     btc: 21000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Binance US",              btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Coinsquare",              btc: 3800,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "SwissBorg",               btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "BTC Markets",             btc: 3800,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Indodax",                 btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
-      { name: "Phemex",                  btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Coinbase",                 btc: 962980,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Binance",                  btc: 630107,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Upbit",                    btc: 185943,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Robinhood",                btc: 185779,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Kraken",                   btc: 156683,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Bitfinex",                 btc: 149943,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "OKX",                      btc: 109783,  category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Gemini",                   btc: 60339,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "bitFlyer",                 btc: 55527,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Bybit",                    btc: 53157,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Coincheck",                btc: 42452,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Bithumb",                  btc: 42435,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Deribit",                  btc: 41968,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Binance Pool",             btc: 41924,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Bitstamp",                 btc: 41562,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Crypto.com",               btc: 40307,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Boerse Stuttgart Digital", btc: 37695,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Bitget",                   btc: 32016,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Revolut",                  btc: 30905,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "River",                    btc: 25446,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Bitvavo",                  btc: 23625,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "KuCoin",                   btc: 22000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "HTX",                      btc: 21000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitbank",                  btc: 20261,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Gate",                     btc: 18732,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Binance US",               btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "MEXC",                     btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitkub",                   btc: 16000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "BitMEX",                   btc: 14699,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "SBI VC Trade",             btc: 13415,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "HashKey Exchange",         btc: 13200,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Coinbase Prime",           btc: 12698,   category: CATEGORY_CEX,   source: "Arkham" }, // ✓
+      { name: "Indodax",                  btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "SwissBorg",                btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Phemex",                   btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Coinsquare",               btc: 3800,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "BTC Markets",              btc: 3800,    category: CATEGORY_CEX,   source: "Arkham" },
 
       // ── Institutional / Whale ─────────────────────────────────────────────
-      { name: "Satoshi Nakamoto",        btc: 1096361, category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "BlackRock",               btc: 802523,  category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Fidelity Custody",        btc: 461913,  category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Strategy",                btc: 445569,  category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "U.S. Government",         btc: 328361,  category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Grayscale",               btc: 209214,  category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Wrapped Bitcoin",         btc: 116274,  category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Tether",                  btc: 97204,   category: CATEGORY_WHALE, source: "Arkham" },
-      // Anonymous large wallets identified by Arkham (unlabeled entities)
-      { name: "bc1qd4…rzr",              btc: 91850,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Mt. Gox Hacker",          btc: 79957,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "bc1q8y…4g",              btc: 78317,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "U.K. Government",         btc: 61245,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Babylon",                 btc: 58329,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "1LdRc…QeC",              btc: 53880,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "1AC4f…mtA",              btc: 51830,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Bitwise",                 btc: 50760,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "1LruN…5os",              btc: 44000,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Twenty One Capital",      btc: 43513,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "MetaPlanet",              btc: 40177,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "MARA",                    btc: 47531,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Justin Sun",              btc: 37500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Paxos",                   btc: 32000,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Galaxy Digital",          btc: 27500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Copper",                  btc: 26500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Purpose Investments",     btc: 23500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "ARK Invest",              btc: 22500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Fidelity FBTC ETF Inflows", btc: 19500, category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "NYDIG Custody",           btc: 18500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "21Shares",                btc: 18000,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Ceffu",                   btc: 17500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Riot Platforms",          btc: 17722,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Winklevoss Capital",      btc: 15000,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Coinshares",              btc: 14200,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Anchorage Digital",       btc: 13500,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Solv Protocol",           btc: 12800,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "CleanSpark",              btc: 10600,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Satoshi Nakamoto",         btc: 1096361, category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "BlackRock",                btc: 802523,  category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Fidelity Custody",         btc: 461913,  category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Strategy",                 btc: 445569,  category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "U.S. Government",          btc: 328361,  category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Grayscale",                btc: 209214,  category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Wrapped Bitcoin",          btc: 116274,  category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Tether",                   btc: 97204,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "bc1qd4…rzr",               btc: 91850,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Mt. Gox Hacker",           btc: 79957,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "bc1q8y…4g",               btc: 78317,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "U.K. Government",          btc: 61245,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Babylon",                  btc: 58329,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "1LdRc…QeC",               btc: 53880,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "1AC4f…mtA",               btc: 51830,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Bitwise",                  btc: 50760,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "MARA",                     btc: 47531,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "1LruN…5os",               btc: 44000,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Twenty One Capital",       btc: 43513,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "MetaPlanet",               btc: 40177,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "ARK Invest",               btc: 36557,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Bitcoin Group SE",         btc: 35174,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Mt. Gox",                  btc: 34504,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Justin Sun",               btc: 37500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "12ib7…1dr",               btc: 31000,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "bc1q8t…hzk",              btc: 30800,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "12tkq…kv",                btc: 28151,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Paxos",                    btc: 26237,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "39eYr…BYw",               btc: 26062,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Abraxas Capital Mgmt",     btc: 24626,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "15cHR…Hxv",               btc: 23600,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Block Inc.",               btc: 22325,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "WisdomTree",               btc: 20247,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "17rm2…NRn",               btc: 20008,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "1Peiz…zGW",               btc: 19414,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Purpose Investments",      btc: 19172,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "NYDIG Custody",            btc: 18500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Ceffu",                    btc: 17500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Riot Platforms",           btc: 17722,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "VanEck",                   btc: 16955,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "bc1qp…j26",               btc: 16400,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Copper",                   btc: 15924,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "3GPAW…bay",               btc: 15868,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "1GR9q…eCG",               btc: 15746,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Winklevoss Capital",       btc: 15000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Coinshares",               btc: 14200,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "21Shares",                 btc: 14412,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓
+      { name: "Anchorage Digital",        btc: 13500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "bc1q0j…0su",              btc: 13177,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "bc1qv…tp8",               btc: 13108,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "Solv Protocol",            btc: 12800,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "36X44…n3",                btc: 12682,   category: CATEGORY_WHALE, source: "Arkham" }, // ✓ anon
+      { name: "CleanSpark",               btc: 10600,   category: CATEGORY_WHALE, source: "Arkham" },
       { name: "Royal Government of Bhutan", btc: 10635, category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Hut 8",                   btc: 10082,   category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Cobo.com",                btc: 8900,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Cryptopia",               btc: 8800,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Abraxas Capital Mgmt",    btc: 8800,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "American Bitcoin",        btc: 8200,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "WisdomTree",              btc: 8200,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Block Inc.",              btc: 8027,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "James Howells",           btc: 7500,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Stefan Thomas",           btc: 7002,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "CI Global Asset Management", btc: 7100, category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "El Salvador Government",  btc: 6046,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "VanEck",                  btc: 9500,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Tesla",                   btc: 9720,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Franklin Templeton",      btc: 9400,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "3IQ",                     btc: 9100,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Invesco",                 btc: 7450,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Nexo",                    btc: 4300,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "UAE Royal Group",         btc: 4300,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "DBS Bank",                btc: 4200,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Ledn",                    btc: 4100,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Prince Group",            btc: 4000,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Bitcoin Group SE",        btc: 3800,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Stone Man Lost Wallet",   btc: 3750,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Semler Scientific",       btc: 3192,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Liquid Network",          btc: 2750,    category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "SpaceX",                  btc: 780,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Strive",                  btc: 925,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Trump Media",             btc: 820,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Nucleus Marketplace",     btc: 760,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Nakamoto (Kindly MD)",    btc: 435,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Clifton Collins",         btc: 380,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Hyperunit",               btc: 380,     category: CATEGORY_WHALE, source: "Arkham" },
-      { name: "Mt. Gox",                 btc: 134000,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Hut 8",                    btc: 10082,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Tesla",                    btc: 9720,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Franklin Templeton",       btc: 9400,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "3IQ",                      btc: 9100,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Cobo.com",                 btc: 8900,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Cryptopia",                btc: 8800,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "American Bitcoin",         btc: 8200,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "James Howells",            btc: 7500,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "CI Global Asset Management", btc: 7100,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Invesco",                  btc: 7450,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Stefan Thomas",            btc: 7002,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "El Salvador Government",   btc: 6046,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Nexo",                     btc: 4300,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "UAE Royal Group",          btc: 4300,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "DBS Bank",                 btc: 4200,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Ledn",                     btc: 4100,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Prince Group",             btc: 4000,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Stone Man Lost Wallet",    btc: 3750,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Semler Scientific",        btc: 3192,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Liquid Network",           btc: 2750,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Strive",                   btc: 925,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Trump Media",              btc: 820,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "SpaceX",                   btc: 780,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Nucleus Marketplace",      btc: 760,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Nakamoto (Kindly MD)",     btc: 435,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Clifton Collins",          btc: 380,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Hyperunit",                btc: 380,     category: CATEGORY_WHALE, source: "Arkham" },
     ];
 
     const fmt = (n) => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
