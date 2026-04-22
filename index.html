@@ -83,7 +83,7 @@
     <h2>Supply distribution</h2>
     <div class="panel"><div id="chart"></div></div>
 
-    <h2>Top 15 tracked entities by BTC held</h2>
+    <h2>All 128 tracked entities by BTC held</h2>
     <div class="panel" id="table-wrap">
       <div class="skeleton" style="height: 200px;"></div>
     </div>
@@ -319,7 +319,7 @@
     }
 
     function renderTable(supply) {
-      const top = [...HOLDERS_SNAPSHOT].sort((a, b) => b.btc - a.btc).slice(0, 15);
+      const top = [...HOLDERS_SNAPSHOT].sort((a, b) => b.btc - a.btc);
       const rows = top.map((r, i) => `
         <tr>
           <td>${i + 1}</td>
