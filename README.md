@@ -1,33 +1,44 @@
 # BTC Holder Breakdown
 
 Live Streamlit dashboard visualizing the distribution of Bitcoin's circulating
-supply across centralized exchanges, known institutional/whale entities, and
-everything else ("retail / unknown").
+supply across centralized exchanges, public-company treasuries, and everything
+else ("retail / unknown").
 
-Data sources:
-- **Arkham Intelligence** — per-entity BTC balances (requires API key).
-- **CoinGecko** — circulating supply (free, no key).
+Built on **free public APIs** — no keys, no signup:
+
+- **mempool.space** — per-address BTC balances for curated CEX cold wallets.
+- **CoinGecko** — public-company BTC treasuries + circulating supply.
 
 ## Setup
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env
-# edit .env and paste your ARKHAM_API_KEY
 streamlit run main.py
 ```
 
-The app opens at <http://localhost:8501>.
+Opens at <http://localhost:8501>.
 
 ## How it works
 
-- `main.py` fetches BTC balances for a configurable list of CEX and
-  institutional/whale entities from Arkham, pulls the circulating supply from
-  CoinGecko, and renders a Plotly donut plus a top-10 holders table.
-- Responses are cached for 10 minutes via `st.cache_data` to limit API credit
-  usage. Use the **Refresh data** button in the sidebar to force a re-fetch.
+- `main.py` sums BTC balances for a curated set of CEX cold wallets via
+  mempool.space, pulls public-company treasuries from CoinGecko's
+  `/companies/public_treasury/bitcoin` endpoint, and computes a residual
+  "Other / Retail / Unknown" bucket from circulating supply.
+- Renders a Plotly donut and a top-10 entities table.
+- All responses are cached for 10 minutes via `st.cache_data`. The sidebar
+  **Refresh data** button clears the cache and re-fetches.
 
-## Configuration
+## Extending coverage
 
-The entity slugs tracked live at the top of `main.py` in `CEX_ENTITIES` and
-`WHALE_ENTITIES`. Edit them to follow different actors.
+CEX reserves are scattered across hundreds of wallets — the numbers are only as
+complete as `CEX_WALLETS` at the top of `main.py`. To improve coverage, add
+more labeled cold-wallet addresses (e.g. from
+[BitInfoCharts](https://bitinfocharts.com/top-100-richest-bitcoin-addresses.html))
+to that dict.
+
+## Caveats
+
+- ETFs and private funds are not represented in the institutional bucket —
+  CoinGecko's endpoint only covers **public** companies.
+- The "Other" slice is a residual and therefore includes everything we can't
+  attribute, including lost coins and Satoshi's stash.
