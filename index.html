@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bitcoin Holder Breakdown</title>
-  <meta name="description" content="Live distribution of circulating BTC across CEXs, public-company treasuries, and everything else." />
+  <meta name="description" content="Distribution of circulating BTC across CEXs, institutional holders, and everything else." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>₿</text></svg>" />
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <style>
@@ -49,10 +49,6 @@
     .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
     .pill.cex { background: rgba(247, 147, 26, 0.15); color: var(--accent); }
     .pill.whale { background: rgba(76, 120, 168, 0.2); color: #8ab2dc; }
-    #errors { margin-top: 12px; }
-    #errors details { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); }
-    #errors summary { cursor: pointer; }
-    #errors ul { margin: 8px 0 0; padding-left: 20px; }
     details.methodology { margin-top: 22px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; font-size: 13px; color: var(--muted); line-height: 1.6; }
     details.methodology summary { cursor: pointer; color: var(--text); font-weight: 500; }
     details.methodology code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
@@ -67,13 +63,13 @@
       <div>
         <h1>Bitcoin Holder Breakdown <span style="color: var(--accent)">₿</span></h1>
         <p class="subtitle">
-          Share of circulating BTC held by major CEXs, public-company treasuries, and
-          everything else. Data: mempool.space + CoinGecko. No API keys, fetched live
-          in your browser.
+          Distribution of circulating BTC across major CEXs, institutional holders, and
+          everything else. Holdings snapshot from Arkham Intelligence (2026-04-22).
+          Circulating supply fetched live from CoinGecko.
         </p>
       </div>
       <div class="controls">
-        <button id="refresh">Refresh</button>
+        <button id="refresh">Refresh supply</button>
         <span id="status">Loading…</span>
       </div>
     </header>
@@ -81,91 +77,151 @@
     <div id="metrics" class="metrics">
       <div class="metric"><div class="label">Circulating supply</div><div class="skeleton"></div></div>
       <div class="metric"><div class="label">On top CEXs (tracked)</div><div class="skeleton"></div></div>
-      <div class="metric"><div class="label">Public company treasuries</div><div class="skeleton"></div></div>
+      <div class="metric"><div class="label">Institutional / Whale entities</div><div class="skeleton"></div></div>
     </div>
 
     <h2>Supply distribution</h2>
     <div class="panel"><div id="chart"></div></div>
 
-    <h2>Top 10 tracked entities by BTC held</h2>
+    <h2>Top 15 tracked entities by BTC held</h2>
     <div class="panel" id="table-wrap">
       <div class="skeleton" style="height: 200px;"></div>
     </div>
 
-    <div id="errors"></div>
-
     <details class="methodology">
       <summary>Methodology & caveats</summary>
-      <p><strong>CEX holdings</strong> are summed from a curated list of publicly-known cold-wallet addresses via <code>mempool.space</code>. This undercounts — real CEX reserves are spread across hundreds of wallets. Extend <code>CEX_WALLETS</code> in <code>index.html</code> (e.g. using labeled addresses from BitInfoCharts) to improve coverage.</p>
-      <p><strong>Public-company treasuries</strong> come from CoinGecko's <code>/companies/public_treasury/bitcoin</code> endpoint (Strategy, MARA, Metaplanet, etc.). Spot ETFs and private funds are <strong>not</strong> represented.</p>
-      <p><strong>"Other On-chain"</strong> is computed as circulating supply minus everything tracked above, so it absorbs retail holders, lost coins, Satoshi's stash, spot ETFs, miners, private whales, and any CEX wallets we haven't catalogued.</p>
+      <p><strong>Holdings snapshot</strong> — entity balances are sourced from Arkham Intelligence's Bitcoin Top Holders list (snapshot date 2026-04-22) and are baked directly into this page. No live API calls are made for holdings data.</p>
+      <p><strong>CEX holdings</strong> represent on-chain labeled exchange wallets as identified by Arkham. Coverage is limited to Arkham-labeled addresses; real exchange reserves may be larger.</p>
+      <p><strong>Institutional / Whale entities</strong> include public-company treasuries (Strategy, MARA, etc.), spot ETF custodians (BlackRock IBIT, Fidelity FBTC, etc.), governments, known individual wallets (Satoshi, lost wallets), and other tracked large holders.</p>
+      <p><strong>"Other On-chain"</strong> is computed as circulating supply minus everything tracked above. It absorbs retail holders, miners, unlabeled whale addresses, lost coins, and any entities not in the snapshot.</p>
+      <p><strong>Circulating supply</strong> is fetched live from CoinGecko on page load. If that fails, a fallback constant of 19,800,000 BTC is used.</p>
     </details>
 
     <footer>
-      Sources: <a href="https://mempool.space/docs/api/rest" target="_blank" rel="noopener">mempool.space REST API</a> ·
-      <a href="https://www.coingecko.com/en/api" target="_blank" rel="noopener">CoinGecko public API</a>.
+      Holdings: <a href="https://platform.arkhamintelligence.com" target="_blank" rel="noopener">Arkham Intelligence</a> snapshot 2026-04-22 ·
+      Supply: <a href="https://www.coingecko.com/en/api" target="_blank" rel="noopener">CoinGecko public API</a>
     </footer>
   </div>
 
   <script>
-    const CEX_WALLETS = {
-      "Binance": [
-        "34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo",
-        "bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h",
-        "1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s",
-      ],
-      "Bitfinex": ["bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw97"],
-      "Robinhood": ["bc1ql49ydapnjafl5t2cp9zqpjwe6pdgmxy98859v2"],
-      "Kraken":    ["bc1qjasf9z3h7w3jspkhtgatgpyvvzgpa2wwd2lr0eh5tx44reyn2k7sfc27a4"],
-      "Bitstamp":  ["bc1qa5wkgaew2dkv56kfvj49j0av5nml45x9ek9hz6"],
-    };
-
     const CATEGORY_CEX = "Top CEXs";
     const CATEGORY_WHALE = "Known Institutional/Whale Entities";
     const CATEGORY_OTHER = "Other On-chain (Retail/Unknown)";
     const FALLBACK_SUPPLY = 19_800_000;
+    const SNAPSHOT_DATE = "2026-04-22";
+
+    // Snapshot of Bitcoin top holders from Arkham Intelligence, 2026-04-22.
+    // btc values are approximate on-chain balances as labeled by Arkham.
+    const HOLDERS_SNAPSHOT = [
+      // ── Top CEXs ──────────────────────────────────────────────────────────
+      { name: "Coinbase",                btc: 968000,  category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Binance",                 btc: 576000,  category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Coinbase Prime",          btc: 443000,  category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Upbit",                   btc: 209000,  category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Robinhood",               btc: 138000,  category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Kraken",                  btc: 127000,  category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitfinex",                btc: 98000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "OKX",                     btc: 86000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Gemini",                  btc: 79000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bybit",                   btc: 67000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "BitMEX",                  btc: 32000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Binance Pool",            btc: 45000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Crypto.com",              btc: 43000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitstamp",                btc: 31000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Gate",                    btc: 27000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitget",                  btc: 25000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bithumb",                 btc: 26000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Deribit",                 btc: 23000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "KuCoin",                  btc: 22000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Coincheck",               btc: 22000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "HTX",                     btc: 21000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "bitFlyer",                btc: 18000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Revolut",                 btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Binance US",              btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "MEXC",                    btc: 17000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitkub",                  btc: 16000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Boerse Stuttgart Digital",btc: 11000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitbank",                 btc: 13000,   category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Indodax",                 btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "River",                   btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "SBI VC Trade",            btc: 8500,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Bitvavo",                 btc: 8000,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "HashKey Exchange",        btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "SwissBorg",               btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Phemex",                  btc: 4200,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "Coinsquare",              btc: 3800,    category: CATEGORY_CEX,   source: "Arkham" },
+      { name: "BTC Markets",             btc: 3800,    category: CATEGORY_CEX,   source: "Arkham" },
+
+      // ── Institutional / Whale ─────────────────────────────────────────────
+      { name: "Satoshi Nakamoto",        btc: 1100000, category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "BlackRock",               btc: 571000,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Strategy",                btc: 537900,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "U.S. Government",         btc: 208000,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Fidelity Custody",        btc: 200700,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Grayscale",               btc: 192000,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Wrapped Bitcoin",         btc: 142500,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Mt. Gox",                 btc: 134000,  category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Winklevoss Capital",      btc: 94000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Mt. Gox Hacker",          btc: 79000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Tether",                  btc: 75000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "U.K. Government",         btc: 61000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Babylon",                 btc: 48200,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "MARA",                    btc: 47531,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Twenty One Capital",      btc: 42000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Bitwise",                 btc: 41000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "MetaPlanet",              btc: 38500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Justin Sun",              btc: 37500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Paxos",                   btc: 32000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Galaxy Digital",          btc: 27500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Copper",                  btc: 26500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Purpose Investments",     btc: 23500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "ARK Invest",              btc: 22500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "NYDIG Custody",           btc: 18500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "21Shares",                btc: 18000,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Ceffu",                   btc: 17500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Riot Platforms",          btc: 17722,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Fidelity FBTC ETF Inflows", btc: 19500, category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Coinshares",              btc: 14200,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Solv Protocol",           btc: 12800,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Anchorage Digital",       btc: 13500,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "CleanSpark",              btc: 10600,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Royal Government of Bhutan", btc: 10635, category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Hut 8",                   btc: 10082,   category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Cobo.com",                btc: 8900,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Cryptopia",               btc: 8800,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Abraxas Capital Mgmt",    btc: 8800,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "American Bitcoin",        btc: 8200,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "WisdomTree",              btc: 8200,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Block Inc.",              btc: 8027,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "CI Global Asset Management", btc: 7100, category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "James Howells",           btc: 7500,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Stefan Thomas",           btc: 7002,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "El Salvador Government",  btc: 6046,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "VanEck",                  btc: 9500,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Tesla",                   btc: 9720,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Franklin Templeton",      btc: 9400,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "3IQ",                     btc: 9100,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Invesco",                 btc: 7450,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Nexo",                    btc: 4300,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "UAE Royal Group",         btc: 4300,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "DBS Bank",                btc: 4200,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Ledn",                    btc: 4100,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Prince Group",            btc: 4000,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Bitcoin Group SE",        btc: 3800,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Stone Man Lost Wallet",   btc: 3750,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Semler Scientific",       btc: 3192,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Liquid Network",          btc: 2750,    category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "SpaceX",                  btc: 780,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Strive",                  btc: 925,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Trump Media",             btc: 820,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Nucleus Marketplace",     btc: 760,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Nakamoto (Kindly MD)",    btc: 435,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Clifton Collins",         btc: 380,     category: CATEGORY_WHALE, source: "Arkham" },
+      { name: "Hyperunit",               btc: 380,     category: CATEGORY_WHALE, source: "Arkham" },
+    ];
 
     const fmt = (n) => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
     const pct = (n) => n.toFixed(2) + "%";
-
-    async function fetchAddress(addr) {
-      const r = await fetch(`https://mempool.space/api/address/${addr}`);
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const d = await r.json();
-      const s = d.chain_stats || {};
-      const sats = (s.funded_txo_sum || 0) - (s.spent_txo_sum || 0);
-      return sats / 1e8;
-    }
-
-    async function fetchCexHoldings(errors) {
-      const rows = [];
-      const entries = Object.entries(CEX_WALLETS);
-      const work = entries.map(async ([exchange, addrs]) => {
-        const results = await Promise.allSettled(addrs.map(fetchAddress));
-        let total = 0, ok = 0;
-        results.forEach((res, i) => {
-          if (res.status === "fulfilled") { total += res.value; ok += 1; }
-          else errors.push(`${exchange} / ${addrs[i].slice(0, 10)}…: ${res.reason.message}`);
-        });
-        if (total > 0) rows.push({ name: exchange, btc: total, category: CATEGORY_CEX, source: `${ok} cold wallet(s)` });
-      });
-      await Promise.all(work);
-      return rows;
-    }
-
-    async function fetchTreasuries() {
-      const r = await fetch("https://api.coingecko.com/api/v3/companies/public_treasury/bitcoin");
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const d = await r.json();
-      return (d.companies || [])
-        .filter((c) => (c.total_holdings || 0) > 0)
-        .map((c) => ({
-          name: c.name || c.symbol || "Unknown",
-          btc: Number(c.total_holdings),
-          category: CATEGORY_WHALE,
-          source: c.symbol || "public filings",
-        }));
-    }
 
     async function fetchSupply() {
       const url = "https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=false";
@@ -175,8 +231,8 @@
       return Number(d.market_data.circulating_supply);
     }
 
-    function buildBreakdown(holdings, supply) {
-      const sumCat = (cat) => holdings.filter((h) => h.category === cat).reduce((a, b) => a + b.btc, 0);
+    function buildBreakdown(supply) {
+      const sumCat = (cat) => HOLDERS_SNAPSHOT.filter((h) => h.category === cat).reduce((a, b) => a + b.btc, 0);
       const cex = sumCat(CATEGORY_CEX);
       const whale = sumCat(CATEGORY_WHALE);
       const other = Math.max(supply - cex - whale, 0);
@@ -229,19 +285,15 @@
           <div class="delta">${pct(cex / supply * 100)} of supply</div>
         </div>
         <div class="metric">
-          <div class="label">Public company treasuries</div>
+          <div class="label">Institutional / Whale entities</div>
           <div class="value">${fmt(whale)} BTC</div>
           <div class="delta">${pct(whale / supply * 100)} of supply</div>
         </div>
       `;
     }
 
-    function renderTable(holdings, supply) {
-      const top = [...holdings].sort((a, b) => b.btc - a.btc).slice(0, 10);
-      if (top.length === 0) {
-        document.getElementById("table-wrap").innerHTML = '<p style="color: var(--muted)">No holdings loaded.</p>';
-        return;
-      }
+    function renderTable(supply) {
+      const top = [...HOLDERS_SNAPSHOT].sort((a, b) => b.btc - a.btc).slice(0, 15);
       const rows = top.map((r, i) => `
         <tr>
           <td>${i + 1}</td>
@@ -249,57 +301,41 @@
           <td><span class="pill ${r.category === CATEGORY_CEX ? "cex" : "whale"}">${r.category === CATEGORY_CEX ? "CEX" : "Institution"}</span></td>
           <td class="num">${fmt(r.btc)}</td>
           <td class="num">${pct(r.btc / supply * 100)}</td>
-          <td class="src">${r.source}</td>
         </tr>
       `).join("");
       document.getElementById("table-wrap").innerHTML = `
         <table>
           <thead>
-            <tr><th>Rank</th><th>Entity</th><th>Category</th><th class="num">BTC</th><th class="num">% of Supply</th><th>Source</th></tr>
+            <tr><th>Rank</th><th>Entity</th><th>Category</th><th class="num">BTC</th><th class="num">% of Supply</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
       `;
     }
 
-    function renderErrors(errors) {
-      const el = document.getElementById("errors");
-      if (!errors.length) { el.innerHTML = ""; return; }
-      el.innerHTML = `<details><summary>${errors.length} fetch issue(s)</summary><ul>${errors.map((e) => `<li>${e}</li>`).join("")}</ul></details>`;
-    }
-
     async function load() {
       const btn = document.getElementById("refresh");
       const status = document.getElementById("status");
       btn.disabled = true;
-      status.textContent = "Loading…";
+      status.textContent = "Fetching supply…";
 
-      const errors = [];
-      let supply = FALLBACK_SUPPLY, supplyLive = false;
-      let cexRows = [], whaleRows = [];
+      let supply = FALLBACK_SUPPLY;
+      let supplyLive = false;
 
-      const [supplyRes, cexRes, whaleRes] = await Promise.allSettled([
-        fetchSupply(),
-        fetchCexHoldings(errors),
-        fetchTreasuries(),
-      ]);
-      if (supplyRes.status === "fulfilled") { supply = supplyRes.value; supplyLive = true; }
-      else errors.push(`supply: ${supplyRes.reason.message} — using fallback ${fmt(FALLBACK_SUPPLY)}`);
-      if (cexRes.status === "fulfilled") cexRows = cexRes.value;
-      else errors.push(`cex: ${cexRes.reason.message}`);
-      if (whaleRes.status === "fulfilled") whaleRows = whaleRes.value;
-      else errors.push(`treasury: ${whaleRes.reason.message}`);
+      try {
+        supply = await fetchSupply();
+        supplyLive = true;
+      } catch (e) {
+        console.warn("CoinGecko supply fetch failed:", e.message, "— using fallback");
+      }
 
-      const holdings = [...cexRows, ...whaleRows];
-      const breakdown = buildBreakdown(holdings, supply);
-
+      const breakdown = buildBreakdown(supply);
       renderMetrics(supply, breakdown[0].btc, breakdown[1].btc);
       renderDonut(breakdown);
-      renderTable(holdings, supply);
-      renderErrors(errors);
+      renderTable(supply);
 
       const ts = new Date().toISOString().replace("T", " ").slice(0, 19);
-      status.textContent = `Updated ${ts} UTC${supplyLive ? "" : " · supply fallback"}`;
+      status.textContent = `Supply updated ${ts} UTC${supplyLive ? "" : " · fallback"}`;
       btn.disabled = false;
     }
 
